@@ -28,19 +28,17 @@ module.exports.getDataSet = async (req, res) => {
 module.exports.addDataSet = async (req, res) => {
     try {
         const metadata = new MetadataModel({
-            created_by: req.body.creater,
-            last_update_by: req.body.creater
+            created_by: req.body.created_by,
+            last_update_by: req.body.created_by
         });
         const newMetadata = await metadata.save();
         const dataSet = new DataSetModel({
             metadata: newMetadata._id,
             description: req.body.description,
-            study: {
-                name: req.body.study.name
-            },
-            source: {
-                name: req.body.source.name
-            }
+            acquisition_date: req.body.acquisition_date,
+            leads: req.body.leads,
+            study: req.body.study,
+            source:req.body.source
         });
         const newDataSet = await dataSet.save();
         res.send(newDataSet);
@@ -53,25 +51,29 @@ module.exports.updateDataSet = async (req, res) => {
     if (!ObjectID.isValid(req.params.id))
         return res.status(400).send('ID unknown');
     try {
-        await DataSetModel.findByIdAndUpdate(
+        const updatedDataSet = await DataSetModel.findByIdAndUpdate(
             {_id: req.params.id},
             {
                 $set: {
                     description: req.body.description,
-                    study: {
-                        details: req.body.study.details
-                    },
-                    source: {
-                        details: req.body.source.details
-                    }
+                    acquisition_date: req.body.acquisition_date,
+                    leads: req.body.leads,
+                    study: req.body.study,
+                    source:req.body.source
                 }
             },
-            { new: true, upset: true, setDefaultsOnInsert: true },
-            (err, docs) => {
-                if (!err) return res.send(docs);
-                else return res.status(500).send({ message: err});
-            }
+            { new: true, upset: true, setDefaultsOnInsert: true }
         )
+        const updatedMetadata = await MetadataModel.findByIdAndUpdate(
+            {_id: updatedDataSet.metadata},
+            {
+                $set: {
+                    last_update_by: req.body.last_update_by,
+                }
+            },
+            { new: true, upset: true, setDefaultsOnInsert: true }
+        )
+        res.status(200).json({dataset: updatedDataSet, metadata: updatedMetadata});
     } catch (err) {
         return res.status(500).json({ message: err });
     }

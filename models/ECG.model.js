@@ -39,10 +39,7 @@ const ECGSchema = new mongoose.Schema({
         data: {
             type: String
         }
-    }],
-    timepoints: {
-        type: Number
-    }
+    }]
 });
 
 const ECGModel = new mongoose.model('ECG',ECGSchema);

@@ -16,14 +16,6 @@ const metadataSchema = new mongoose.Schema(
             maxLength: 55,
             trim: true
         },
-        create_at: {
-            type: Date,
-            default: Date.now
-        },
-        last_update_at: {
-            type: Date,
-            default: Date.now
-        }
     },
     {
         timestamps: true,

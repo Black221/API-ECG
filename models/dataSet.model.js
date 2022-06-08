@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const {ObjectId} = require("mongodb");
 
 const dataSetSchema = new mongoose.Schema(
     {
@@ -50,9 +49,6 @@ const dataSetSchema = new mongoose.Schema(
                 trim: true
             }
         }
-    },
-    {
-        timestamps: true,
     }
 )
 
