@@ -21,7 +21,7 @@ module.exports.addECGMetadata = async (req, res) => {
             additional_information: req.body.additional_information
         });
         const newECGMetadata = await ECGMetadata.save();
-        res.status(200).json({metadata: newECGMetadata});
+        res.status(200).json({ECGMetadata: newECGMetadata});
     } catch (err) {
         res.status(500).json({message: err});
     }
@@ -31,7 +31,7 @@ module.exports.updateECGMetadata = async (req, res) => {
     if (!ObjectID.isValid(req.params.id))
         return res.status(400).send('ID unknown');
     try {
-        await ECGMetadataModel.findByIdAndUpdate(
+        const updatedECGMetadata = await ECGMetadataModel.findByIdAndUpdate(
             {_id: req.params.id},
             {
                 $set: {
@@ -46,7 +46,17 @@ module.exports.updateECGMetadata = async (req, res) => {
                 }
             },
             { new: true, upset: true, setDefaultsOnInsert: true }
-        )
+        );
+        const updatedMetadata = await MetadataModel.findByIdAndUpdate(
+            {_id: updatedECGMetadata.metadata},
+            {
+                $set: {
+                    last_update_by: req.body.last_update_by,
+                }
+            },
+            { new: true, upset: true, setDefaultsOnInsert: true }
+        );
+        res.status(200).json({ECGMetadata: updatedECGMetadata, metadata: updatedMetadata});
     } catch (err) {
         return res.status(500).json({ message: err });
     }

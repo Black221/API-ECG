@@ -7,8 +7,8 @@ const ObjectID = require('mongoose').Types.ObjectId;
 
 module.exports.getAllECG = async (req, res) => {
     try {
-        const dataSet = await ECGModel.find();
-        res.status(200).json({dataset: dataSet});
+        const ECG = await ECGModel.find();
+        res.status(200).json({ECG: ECG});
     } catch (err) {
         return res.status(500).json({ message: err });
     }
@@ -18,9 +18,9 @@ module.exports.getECG = async (req, res) => {
     if (!ObjectID.isValid(req.params.id))
         return res.status(400).send('ID unknown');
     try {
-        const dataSet = await ECGModel.findById({_id: req.params.id})
-        const metadata = await MetadataModel.findById({_id: dataSet.metadata});
-        res.status(200).json({dataset: dataSet, metadata: metadata});
+        const ECG = await ECGModel.findById({_id: req.params.id})
+        const metadata = await MetadataModel.findById({_id: ECG.metadata});
+        res.status(200).json({ECG: ECG, metadata: metadata});
     } catch (err) {
         return res.status(500).json({ message: err });
     }
@@ -31,8 +31,8 @@ module.exports.getAllECGForDataSet = async (req, res) => {
     if (!ObjectID.isValid(req.params.id))
         return res.status(400).send('ID unknown');
     try {
-        const dataSet = await ECGModel.find({dataSet: req.params.id})
-        res.status(200).json({dataset: dataSet});
+        const ECG = await ECGModel.find({dataSet: req.params.id})
+        res.status(200).json({ECG: ECG});
     } catch (err) {
         return res.status(500).json({ message: err });
     }
@@ -97,7 +97,7 @@ module.exports.updateECG = async (req, res) => {
             },
             { new: true, upset: true, setDefaultsOnInsert: true }
         )
-        res.status(200).json({dataset: updatedECG, metadata: updatedMetadata});
+        res.status(200).json({ECG: updatedECG, metadata: updatedMetadata});
     } catch (err) {
         return res.status(500).json({ message: err });
     }
