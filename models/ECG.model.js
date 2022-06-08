@@ -42,5 +42,5 @@ const ECGSchema = new mongoose.Schema({
     }]
 });
 
-const ECGModel = new mongoose.model('ECG',ECGSchema);
+const ECGModel =  mongoose.model('ECG',ECGSchema);
 module.exports = ECGModel;

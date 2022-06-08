@@ -1,17 +1,15 @@
 const router = require('express').Router();
 const ECGMetadataRoutes = require('./ECGMetadata.route');
+const {getAllECG, getECG, updateECG, addECG, deleteECG} = require("../controllers/ECG.controller");
 
-router.get('/', );
-router.get('/specific', );
+router.get('/', getAllECG);
+router.get('/specific', getECG);
 
-router.post('/', );
+router.post('/', addECG);
 
-router.put('/:id', );
+router.put('/:id', updateECG);
 
-router.delete('/:id', );
-
-router.patch('/', );
-router.patch('/', );
+router.delete('/:id', deleteECG);
 
 router.use('/metadata', ECGMetadataRoutes);
 

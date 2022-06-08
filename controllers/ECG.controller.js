@@ -32,16 +32,18 @@ module.exports.addECG = async (req, res) => {
             last_update_by: req.body.created_by
         });
         const newMetadata = await metadata.save();
-        const dataSet = new ECGModel({
+        const ECG = new ECGModel({
             metadata: newMetadata._id,
-            description: req.body.description,
-            acquisition_date: req.body.acquisition_date,
-            leads: req.body.leads,
-            study: req.body.study,
-            source:req.body.source
+            dataSet: req.body.dataset,
+            patient_id:  req.body.patient_id,
+            anonymized:  req.body.anonymized,
+            average_beat:  req.body.average_beat,
+            filename:  req.body.filename,
+            filepath:  req.body.filepath,
+            leads: req.body.leads
         });
-        const newDataSet = await dataSet.save();
-        res.send(newDataSet);
+        const newECG = await ECG.save();
+        res.status(200).json({ECG: newECG});
     } catch (err) {
         res.status(500).send(err);
     }
@@ -55,7 +57,12 @@ module.exports.updateECG = async (req, res) => {
             {_id: req.params.id},
             {
                 $set: {
-
+                    patient_id:  req.body.patient_id,
+                    anonymized:  req.body.anonymized,
+                    average_beat:  req.body.average_beat,
+                    filename:  req.body.filename,
+                    filepath:  req.body.filepath,
+                    leads: req.body.leads
                 }
             },
             { new: true, upset: true, setDefaultsOnInsert: true }
