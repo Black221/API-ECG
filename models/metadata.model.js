@@ -20,7 +20,7 @@ const metadataSchema = new mongoose.Schema(
     {
         timestamps: true,
     }
-)
+);
 
 const metadataModel = mongoose.model("metadata", metadataSchema);
 module.exports = metadataModel;

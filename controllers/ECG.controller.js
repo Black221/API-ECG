@@ -62,7 +62,6 @@ module.exports.addECG = async (req, res) => {
         if (!fs.existsSync(filepath)){
             fs.mkdirSync(filepath, { recursive: true });
         }
-        //Use the mv() method to place the file in upload directory(i.e. "uploads")
         await file.mv( `${filepath}/${file.name}`);
         res.status(200).json({ECG: newECG});
     } catch (err) {

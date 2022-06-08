@@ -25,10 +25,6 @@ app.get('/', (req, res) => {
 })
 
 
-
-
-
-
 app.listen(process.env.PORT, (err) => {
     if (!err)
         console.log("Connected at : http://localhost:"+process.env.PORT);

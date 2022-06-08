@@ -103,7 +103,7 @@ const metadataSchema = new mongoose.Schema(
             trim: true
         }
     }
-)
+);
 
 const ECGMetadataModel = mongoose.model("ECGMetadata", metadataSchema);
 module.exports = ECGMetadataModel;
