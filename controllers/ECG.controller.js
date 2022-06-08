@@ -1,5 +1,6 @@
 const ECGModel = require('../models/ECG.model');
 const MetadataModel = require('../models/metadata.model');
+const fs = require("fs");
 
 const ObjectID = require('mongoose').Types.ObjectId;
 
@@ -39,11 +40,13 @@ module.exports.getAllECGForDataSet = async (req, res) => {
 
 module.exports.addECG = async (req, res) => {
     try {
-        const metadata = new ECGModel({
+        const metadata = new MetadataModel({
             created_by: req.body.created_by,
             last_update_by: req.body.created_by
         });
         const newMetadata = await metadata.save();
+        let file = req.file;
+        let filepath = `${__dirname}/../client/public/files/${req.body.file.name}`;
         const ECG = new ECGModel({
             metadata: newMetadata._id,
             dataSet: req.body.dataset,
@@ -51,10 +54,16 @@ module.exports.addECG = async (req, res) => {
             anonymized:  req.body.anonymized,
             average_beat:  req.body.average_beat,
             filename:  req.body.filename,
-            filepath:  req.body.filepath,
+            filepath:  filepath,
             leads: req.body.leads
         });
         const newECG = await ECG.save();
+
+        if (!fs.existsSync(filepath)){
+            fs.mkdirSync(filepath, { recursive: true });
+        }
+        //Use the mv() method to place the file in upload directory(i.e. "uploads")
+        await file.mv( `${filepath}/${file.name}`);
         res.status(200).json({ECG: newECG});
     } catch (err) {
         res.status(500).send(err);
@@ -65,7 +74,7 @@ module.exports.updateECG = async (req, res) => {
     if (!ObjectID.isValid(req.params.id))
         return res.status(400).send('ID unknown');
     try {
-        const updatedDataSet = await ECGModel.findByIdAndUpdate(
+        const updatedECG = await ECGModel.findByIdAndUpdate(
             {_id: req.params.id},
             {
                 $set: {
@@ -79,8 +88,8 @@ module.exports.updateECG = async (req, res) => {
             },
             { new: true, upset: true, setDefaultsOnInsert: true }
         )
-        const updatedMetadata = await ECGModel.findByIdAndUpdate(
-            {_id: updatedDataSet.metadata},
+        const updatedMetadata = await MetadataModel.findByIdAndUpdate(
+            {_id: updatedECG.metadata},
             {
                 $set: {
                     last_update_by: req.body.last_update_by,
@@ -88,7 +97,7 @@ module.exports.updateECG = async (req, res) => {
             },
             { new: true, upset: true, setDefaultsOnInsert: true }
         )
-        res.status(200).json({dataset: updatedDataSet, metadata: updatedMetadata});
+        res.status(200).json({dataset: updatedECG, metadata: updatedMetadata});
     } catch (err) {
         return res.status(500).json({ message: err });
     }
