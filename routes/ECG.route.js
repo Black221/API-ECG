@@ -1,10 +1,10 @@
 const router = require('express').Router();
 const ECGMetadataRoutes = require('./ECGMetadata.route');
-const {getAllECG, getECG, updateECG, addECG, deleteECG} = require("../controllers/ECG.controller");
+const {getAllECG, getECG, updateECG, addECG, deleteECG, getAllECGForDataSet} = require("../controllers/ECG.controller");
 
 router.get('/', getAllECG);
 router.get('/specific', getECG);
-
+router.get('/dataset/:id', getAllECGForDataSet);
 router.post('/', addECG);
 
 router.put('/:id', updateECG);

@@ -25,6 +25,18 @@ module.exports.getECG = async (req, res) => {
     }
 }
 
+
+module.exports.getAllECGForDataSet = async (req, res) => {
+    if (!ObjectID.isValid(req.params.id))
+        return res.status(400).send('ID unknown');
+    try {
+        const dataSet = await ECGModel.find({dataSet: req.params.id})
+        res.status(200).json({dataset: dataSet});
+    } catch (err) {
+        return res.status(500).json({ message: err });
+    }
+}
+
 module.exports.addECG = async (req, res) => {
     try {
         const metadata = new ECGModel({
